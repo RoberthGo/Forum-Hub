@@ -49,9 +49,6 @@ public class ServiceTopic {
             if ( repositoryTopic.existsByAuthorAndMessage(dataUpdate.title(), dataUpdate.message())) {
                 throw new NotExist("There is already a topic exactly like this");
             }
-            if (dataUpdate.course() != null) {
-                topic.setCourse(dataUpdate.course());
-            }
             if (dataUpdate.message() != null) {
                 topic.setMessage(dataUpdate.message());
             }

@@ -1,6 +1,7 @@
 package com.projects.personal.forum_hub.understructure.security;
 
 import com.projects.personal.forum_hub.repository.UserRepository;
+import com.projects.personal.forum_hub.service.ServiceToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,22 +24,23 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected  void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String path = request.getRequestURI();
-        if ("/register".equals(path) || "/login".equals(path)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String authHeader = request.getHeader("Authorization");
+        var authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
-            var token =  authHeader.replace("Bearer ", "");
-            String subject = tokenService.getSubject(token);
-            if (subject != null) {
-                var user = userRepository.findByEmail(subject);
-                if (!user.isPresent())
-                   throw new IllegalStateException("User does not exist");
-                var authentication = new UsernamePasswordAuthenticationToken(user.get(), null,
-                        user.get().getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            var token = authHeader.replace("Bearer ", "");
+            String email;
+            try {
+                email = tokenService.getSubject(token);
+                if (email != null) {
+                    var usuario = userRepository.selectUserByEmail(email);
+                    //System.out.println(usuario.get().getEmail());
+                    if (!usuario.isPresent())
+                        throw new IllegalStateException("User does not exist");
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario.get(), null,
+                            usuario.get().getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException();
             }
         }
         filterChain.doFilter(request, response);

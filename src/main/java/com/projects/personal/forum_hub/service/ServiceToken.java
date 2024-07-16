@@ -1,13 +1,9 @@
-package com.projects.personal.forum_hub.understructure.security;
+package com.projects.personal.forum_hub.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 
-import com.auth0.jwt.interfaces.JWTVerifier;
-import com.projects.personal.forum_hub.dto.user.DTOUser;
-import com.projects.personal.forum_hub.dto.user.DTOUserAnswer;
 import com.projects.personal.forum_hub.models.User;
 import com.projects.personal.forum_hub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +14,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import jakarta.validation.Valid;
 
 @Service
 public class ServiceToken {
@@ -40,7 +35,7 @@ public class ServiceToken {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception) {
-            throw new JWTCreationException("Unexpected error, try again later ", exception);
+            throw new RuntimeException("Unexpected error, try again later ", exception);
         }
     }
 
@@ -48,17 +43,22 @@ public class ServiceToken {
         if (token == null) {
             throw new RuntimeException("Token is null");
         }
+        DecodedJWT verifier = null;
         try {
             Algorithm  algorithm = Algorithm.HMAC256(keySecret);
-            return JWT.require(algorithm)
+            verifier = JWT.require(algorithm)
                     .withIssuer("forum-hub")
-                    .build().verify(token).getSubject();
+                    .build().verify(token);
         } catch (JWTVerificationException exception) {
             throw new RuntimeException("Token is invalid");
         }
+        if (verifier.getSubject() == null) {
+            throw new RuntimeException("Verifier invalido");
+        }
+        return verifier.getSubject();
     }
 
     private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
