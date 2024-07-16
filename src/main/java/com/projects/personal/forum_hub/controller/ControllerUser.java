@@ -45,7 +45,7 @@ public class ControllerUser {
         System.out.println(authToken);
         var usuarioAutenticado = authenticationManager.authenticate(authToken);
         var JWTtoken = serviceToken.generateToken((User) usuarioAutenticado.getPrincipal());
-        return  ResponseEntity.ok(new TokenData(" "));
+        return  ResponseEntity.ok(new TokenData(JWTtoken));
     }
 
 
