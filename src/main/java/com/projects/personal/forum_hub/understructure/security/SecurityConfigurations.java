@@ -1,4 +1,4 @@
-package com.projects.personal.forum_hub.infra.security;
+/*package com.projects.personal.forum_hub.infra.security;
 
 import com.projects.personal.forum_hub.understructure.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,3 +47,4 @@ public class SecurityConfigurations {
         return new BCryptPasswordEncoder();
     }
 }
+*/

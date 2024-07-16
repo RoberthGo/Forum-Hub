@@ -3,9 +3,10 @@ package com.projects.personal.forum_hub.models;
 import com.projects.personal.forum_hub.dto.user.DTOUser;
 import jakarta.persistence.*;
 import lombok.*;
+/*
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetails;*/
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+// implements UserDetails
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,17 +40,15 @@ public class User implements UserDetails {
         this.profile=user.profile();
     }
 
-    @Override
+    /*@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("USER"));
-    }
+    }*/
 
-    @Override
     public String getPassword(){
         return this.password;
     }
 
-    @Override
     public String getUsername() {
         return this.username;
     }

@@ -1,7 +1,7 @@
 package com.projects.personal.forum_hub.understructure.errors;
-
+/*
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;*/
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -27,10 +27,10 @@ public class ControllerErrors {
         return ResponseEntity.badRequest().body(ex.getFieldErrors().stream().map(validationError::new).toList());
     }
 
-    @ExceptionHandler({JWTCreationException.class, JWTVerificationException.class})
+    /*@ExceptionHandler({JWTCreationException.class, JWTVerificationException.class})
     public ResponseEntity errorJWT(JWTCreationException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
-    }
+    }*/
 
     private record validationError(String key, String message) {
         public validationError(FieldError error) {

@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 public record DTOTopicAnswer(
         Long id,
-        String author,
+        Long author,
         String message,
-        String course,
+        Long course,
         String title,
         State status,
         LocalDateTime creationDate

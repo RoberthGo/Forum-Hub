@@ -4,6 +4,7 @@ import com.projects.personal.forum_hub.dto.course.DTOCourse;
 import com.projects.personal.forum_hub.dto.course.DTOCourseAnswer;
 import com.projects.personal.forum_hub.dto.course.DTOUpdateCourse;
 import com.projects.personal.forum_hub.service.ServiceCourse;
+import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class ControllerCourse {
         return serviceCourse.getById(idCourse, idAuthor);
     }
 
-    @PostMapping()
-    public ResponseEntity<DTOCourseAnswer> registerCourse(@RequestBody @Valid DTOCourseAnswer course, Long idAuthor) {
+    @PostMapping("/{idAuthor}")
+    public ResponseEntity<DTOCourseAnswer> registerCourse(@RequestBody @Valid DTOCourse course, @PathVariable Long idAuthor) throws NotExist {
         return serviceCourse.registerCourse(course, idAuthor);
     }
 

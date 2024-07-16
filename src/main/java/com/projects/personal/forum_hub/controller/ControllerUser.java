@@ -5,7 +5,7 @@ import com.projects.personal.forum_hub.dto.user.DTOUser;
 import com.projects.personal.forum_hub.dto.user.DTOUserAnswer;
 import com.projects.personal.forum_hub.dto.user.DTOUserLogin;
 import com.projects.personal.forum_hub.models.User;
-import com.projects.personal.forum_hub.service.ServiceToken;
+//import com.projects.personal.forum_hub.service.ServiceToken;
 import com.projects.personal.forum_hub.service.ServiceUser;
 import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;/*
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.Authentication;*/
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -27,10 +27,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ControllerUser {
     @Autowired
     private ServiceUser serviceUser;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private ServiceToken serviceToken;
+    //@Autowired
+   // private AuthenticationManager authenticationManager;
+    //  @Autowired
+   // private ServiceToken serviceToken;
 
     @PostMapping("/register")
     @Transactional
@@ -40,21 +40,22 @@ public class ControllerUser {
 
     @PostMapping
     //@Transactional
-    public ResponseEntity<TokenData> loginUser(@RequestBody @Valid DTOUserLogin user) {
-        Authentication authToken = new UsernamePasswordAuthenticationToken(user.email(), user.password());
-        System.out.println(authToken);
-        var usuarioAutenticado = authenticationManager.authenticate(authToken);
-        var JWTtoken = serviceToken.generateToken((User) usuarioAutenticado.getPrincipal());
-        return  ResponseEntity.ok(new TokenData(JWTtoken));
+    public ResponseEntity<String> loginUser(@RequestBody @Valid DTOUserLogin user) {
+        //Authentication authToken = new UsernamePasswordAuthenticationToken(user.email(), user.password());
+        //System.out.println(authToken);
+        //var usuarioAutenticado = authenticationManager.authenticate(authToken);
+        //var JWTtoken = serviceToken.generateToken((User) usuarioAutenticado.getPrincipal());
+        return  serviceUser.login(user);
+        //return  ResponseEntity.ok(new TokenData(JWTtoken));
     }
 
 
-    @GetMapping
+    @GetMapping("users")
     public ResponseEntity<Page<DTOUserAnswer>> getUser(@PageableDefault(size = 5, sort = {"username"}) Pageable page) {
         return serviceUser.getAll(page);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("users/{id}")
     public ResponseEntity<DTOUserAnswer> getUser(@PathVariable Long id) {;
         return serviceUser.getByID(id);
     }

@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;/*
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;*/
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -46,6 +46,14 @@ public class ServiceUser {
         return  ResponseEntity.ok(new TokenData(" "));
     }
 
+
+    public ResponseEntity<String> login(DTOUserLogin user){
+        if(userRepository.existsByEmailAndPassword(user.email(), user.password())){
+            return ResponseEntity.ok("User logged in");
+        }
+        return  ResponseEntity.ok("This user does not exist");
+    }
+
     public ResponseEntity<DTOUserAnswer> registerUser(DTOUser userNew, UriComponentsBuilder uriComponentsBuilder) {
         if (userRepository.existsByEmail(userNew.email())) {
             throw new NotExist("This email is already in use");
@@ -54,8 +62,8 @@ public class ServiceUser {
             throw new NotExist("This username is already in use");
         }
         var user = new User(userNew);
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
+        //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         URI url = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(url).body(new DTOUserAnswer(user));

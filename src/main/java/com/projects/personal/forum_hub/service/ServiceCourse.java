@@ -6,6 +6,7 @@ import com.projects.personal.forum_hub.dto.course.DTOUpdateCourse;
 import com.projects.personal.forum_hub.models.Course;
 import com.projects.personal.forum_hub.repository.CourseRepository;
 import com.projects.personal.forum_hub.repository.UserRepository;
+import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,20 +28,14 @@ public class ServiceCourse {
     private UserRepository userRepository;
 
     public ResponseEntity<Page<DTOCourseAnswer>> getAll(Pageable page) {
-        Page<Course> coursePage = courseRepository.findAll(page);
-        List<DTOCourseAnswer> dtoCourseAnswers = coursePage.stream()
-                .filter(Course::getPublicCourse)
-                .map(DTOCourseAnswer::new)
-                .collect(Collectors.toList());
-        Page<DTOCourseAnswer> dtoPage = new PageImpl<>(dtoCourseAnswers, page, coursePage.getTotalElements());
-        return ResponseEntity.ok(dtoPage);
+        return ResponseEntity.ok(courseRepository.findAll(page).map(DTOCourseAnswer::new));
     }
 
     public ResponseEntity<DTOCourseAnswer> getById(Long idCourse, Long idAuthor) {
-        Optional<Course> course = Optional.of(courseRepository.getReferenceById(idCourse));
-        if (!course.isPresent()) {
+        if (!courseRepository.existsById(idCourse)) {
             return ResponseEntity.notFound().build();
         }
+        Optional<Course> course = Optional.of(courseRepository.getReferenceById(idCourse));
         if (course.get().getPublicCourse() == false && idAuthor != course.get().getAuthor_id()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -48,18 +43,19 @@ public class ServiceCourse {
     }
 
 
-    public ResponseEntity<DTOCourseAnswer> registerCourse(@Valid DTOCourseAnswer course, Long idAuthor) {
+    public ResponseEntity<DTOCourseAnswer> registerCourse(DTOCourse course, Long idAuthor) throws  NotExist{
         userExist(idAuthor);
-        var courseAns = new Course(course);
+        //System.out.println("EXISTEAUTOR");
+        var courseAns = new Course(course,idAuthor);
         return ResponseEntity.ok(new DTOCourseAnswer(courseRepository.save(courseAns)));
     }
 
     public ResponseEntity<DTOCourseAnswer> update(DTOUpdateCourse course, Long idAuthor, Long idCourse) {
         userExist(idAuthor);
-        Optional<Course> courseOptional = courseRepository.findById(idCourse);
-        if (!courseOptional.isPresent()) {
+        if (!courseRepository.existsById(idCourse)) {
             return ResponseEntity.notFound().build();
         }
+        Optional<Course> courseOptional = courseRepository.findById(idCourse);
         if (courseOptional.get().getAuthor_id() != idAuthor) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -70,10 +66,10 @@ public class ServiceCourse {
 
     public ResponseEntity<DTOCourseAnswer> delete(Long idAuthor, Long idCourse) {
         userExist(idAuthor);
-        Optional<Course> courseOptional = courseRepository.findById(idCourse);
-        if (!courseOptional.isPresent()) {
+        if ( !courseRepository.existsById(idCourse) ) {
             return ResponseEntity.notFound().build();
         }
+        Optional<Course> courseOptional = courseRepository.findById(idCourse);
         if (courseOptional.get().getAuthor_id() != idAuthor) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -81,9 +77,9 @@ public class ServiceCourse {
         return ResponseEntity.noContent().build();
     }
 
-    public void userExist(Long idAuthor) {
+    public void userExist(Long idAuthor) throws NotExist {
         if (!userRepository.existsById(idAuthor)) {
-            throw new IllegalArgumentException("Author not found");
+            throw new NotExist("Author not found");
         }
     }
 }

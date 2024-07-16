@@ -4,7 +4,9 @@ import com.projects.personal.forum_hub.dto.topic.DTOTopic;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicAnswer;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicUpdate;
 import com.projects.personal.forum_hub.models.Topic;
+import com.projects.personal.forum_hub.repository.CourseRepository;
 import com.projects.personal.forum_hub.repository.TopicRepository;
+import com.projects.personal.forum_hub.repository.UserRepository;
 import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,20 @@ import java.util.Optional;
 public class ServiceTopic {
     @Autowired
     private TopicRepository repositoryTopic;
+    @Autowired
+    private UserRepository repositoryUser;
+    @Autowired
+    private CourseRepository repositoryCourse;
+
 
     public Topic registerTopic(Topic topic) throws NotExist {
-        // CAMBIAR POR USER
-        if (!repositoryTopic.existsByAuthor(topic.getAuthor())) {
+        if (!repositoryUser.existsById(topic.getAuthor())) {
             throw new NotExist("This user does not exist ");
         }
-        if (repositoryTopic.existsByAuthorAndMessage(topic.getTitle(), topic.getMessage())) {
+        if(!repositoryCourse.existsById(topic.getCourse())) {
+            throw new NotExist("This course does not exist");
+        }
+        if (repositoryTopic.existsByTitleAndMessage(topic.getTitle(), topic.getMessage())) {
             throw new NotExist("Duplicate topic!");
         }
         return repositoryTopic.save(topic);
@@ -43,10 +52,10 @@ public class ServiceTopic {
     }
 
     public ResponseEntity<DTOTopicAnswer> update(Long id, DTOTopicUpdate dataUpdate) throws NotExist {
-        Optional<Topic> topicDB = Optional.of(repositoryTopic.getReferenceById(id));
-        if (topicDB.isPresent()) {
+        if (repositoryTopic.existsById(id)) {
+            Optional<Topic> topicDB = Optional.of(repositoryTopic.getReferenceById(id));
             var topic = topicDB.get();
-            if ( repositoryTopic.existsByAuthorAndMessage(dataUpdate.title(), dataUpdate.message())) {
+            if ( repositoryTopic.existsByTitleAndMessage(dataUpdate.title(), dataUpdate.message())) {
                 throw new NotExist("There is already a topic exactly like this");
             }
             if (dataUpdate.message() != null) {
@@ -64,16 +73,17 @@ public class ServiceTopic {
     }
 
     public DTOTopicAnswer getByID(Long id) throws NotExist {
-        Optional<Topic> topicDB = Optional.of(repositoryTopic.getReferenceById(id));
-        if (!topicDB.isPresent()) {
+        if (repositoryTopic.existsById(id)) {
             throw new NotExist("The topic does not exist");
         }
+        Optional<Topic> topicDB = Optional.of(repositoryTopic.getReferenceById(id));
         return new DTOTopicAnswer(topicDB.get());
     }
 
-    public ResponseEntity<Topic> deleteByID(Long id) {
-        Optional<Topic> topic = Optional.of(repositoryTopic.getReferenceById(id));
-        if (topic.isPresent()) {
+    public ResponseEntity deleteByID(Long id) {
+
+        if (repositoryTopic.existsById(id)) {
+            Optional<Topic> topic = Optional.of(repositoryTopic.getReferenceById(id));
             repositoryTopic.deleteById(topic.get().getId());
             return ResponseEntity.noContent().build();
         }

@@ -49,7 +49,7 @@ public class ControllerTopic {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Topic> deleteTopic(@PathVariable Long id) {
+    public ResponseEntity deleteTopic(@PathVariable Long id) {
         return serviceTopic.deleteByID(id);
     }
 }

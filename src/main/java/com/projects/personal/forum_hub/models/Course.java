@@ -22,11 +22,11 @@ public class Course {
     private boolean publicCourse;
     private Long author_id;
 
-    public Course(DTOCourseAnswer course) {
+    public Course(DTOCourse course, Long idAuthor) {
         this.name = course.name();
         this.category = course.category();
         this.publicCourse = false;
-        this.author_id = course.idAuthor();
+        this.author_id = idAuthor;
     }
 
     public void updateData(DTOUpdateCourse course){

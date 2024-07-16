@@ -1,4 +1,4 @@
-package com.projects.personal.forum_hub.service;
+/*package com.projects.personal.forum_hub.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -62,3 +62,4 @@ public class ServiceToken {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
+*/

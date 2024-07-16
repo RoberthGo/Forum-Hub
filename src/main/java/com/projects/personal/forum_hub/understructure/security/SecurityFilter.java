@@ -1,4 +1,4 @@
-package com.projects.personal.forum_hub.understructure.security;
+/*package com.projects.personal.forum_hub.understructure.security;
 
 import com.projects.personal.forum_hub.repository.UserRepository;
 import com.projects.personal.forum_hub.service.ServiceToken;
@@ -45,4 +45,4 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-}
+}*/

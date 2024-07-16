@@ -22,11 +22,11 @@ public class Topic {
     @Setter
     private String title;
     @Setter
-    private String course;
+    private Long course;
     @Setter
     private String message;
     private LocalDateTime creationDate;
-    private String author;
+    private Long author;
 
     public Topic(DTOTopic topic){
         this.title=topic.title();
