@@ -1,4 +1,4 @@
-create table topics(
+CREATE TABLE topics(
     id bigint not null auto_increment,
     author varchar(100) not null,
     message varchar(400) not null unique,

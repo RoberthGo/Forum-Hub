@@ -4,7 +4,6 @@ import com.projects.personal.forum_hub.dto.topic.DTOTopic;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicAnswer;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicUpdate;
 import com.projects.personal.forum_hub.models.Topic;
-import com.projects.personal.forum_hub.repository.TopicRepository;
 import com.projects.personal.forum_hub.service.ServiceTopic;
 import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import jakarta.transaction.Transactional;
@@ -12,19 +11,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/topics")
@@ -57,7 +49,7 @@ public class ControllerTopic {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Topic> updateTopic(@PathVariable Long id) {
+    public ResponseEntity<Topic> deleteTopic(@PathVariable Long id) {
         return serviceTopic.deleteByID(id);
     }
 }
