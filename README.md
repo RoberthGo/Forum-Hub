@@ -1,7 +1,5 @@
 # Forum-Hub
 
-# ReadSearch
-
 ![Java JDK](https://img.shields.io/badge/Java_JDK-v17.0-blue)
 ![IDE](https://img.shields.io/badge/IDE-Intellij_IDEA-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-v3.3.0-blue)
