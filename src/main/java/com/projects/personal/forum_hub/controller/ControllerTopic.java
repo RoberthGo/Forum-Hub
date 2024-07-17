@@ -3,7 +3,6 @@ package com.projects.personal.forum_hub.controller;
 import com.projects.personal.forum_hub.dto.topic.DTOTopic;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicAnswer;
 import com.projects.personal.forum_hub.dto.topic.DTOTopicUpdate;
-import com.projects.personal.forum_hub.models.Topic;
 import com.projects.personal.forum_hub.service.ServiceTopic;
 import com.projects.personal.forum_hub.understructure.errors.NotExist;
 import jakarta.transaction.Transactional;
@@ -28,7 +27,7 @@ public class ControllerTopic {
     @PostMapping
     @Transactional
     public ResponseEntity<DTOTopicAnswer> registerTopic(@RequestBody @Valid DTOTopic topicAns, UriComponentsBuilder uriComponentsBuilder) throws NotExist {
-        return serviceTopic.postTopic(topicAns,uriComponentsBuilder);
+        return serviceTopic.postTopic(topicAns, uriComponentsBuilder);
     }
 
     @GetMapping
@@ -37,14 +36,15 @@ public class ControllerTopic {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DTOTopicAnswer> getTopic(@PathVariable Long id) {;
+    public ResponseEntity<DTOTopicAnswer> getTopic(@PathVariable Long id) {
+        ;
         return ResponseEntity.ok(serviceTopic.getByID(id));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<DTOTopicAnswer> updateTopic(@PathVariable Long id, @RequestBody DTOTopicUpdate topicUpdate){
-        return serviceTopic.update(id,topicUpdate);
+    public ResponseEntity<DTOTopicAnswer> updateTopic(@PathVariable Long id, @RequestBody DTOTopicUpdate topicUpdate) {
+        return serviceTopic.update(id, topicUpdate);
     }
 
     @DeleteMapping("/{id}")

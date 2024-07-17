@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;/*
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;*/
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -26,6 +27,12 @@ import java.util.Optional;
 public class ServiceUser {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private ServiceToken serviceToken;
 
     public ResponseEntity<Page<DTOUserAnswer>> getAll(Pageable page) {
         return ResponseEntity.ok(userRepository.findAll(page).map(DTOUserAnswer::new));
@@ -40,18 +47,23 @@ public class ServiceUser {
     }
 
     public ResponseEntity<TokenData> verifyUser(DTOUserLogin user) {
-        /*Authentication authToken = new UsernamePasswordAuthenticationToken(user.email(), user.password());
-        var usuarioAutenticado = authenticationManager.authenticate(authToken);
-        var JWTtoken = serviceToken.generateToken((User) usuarioAutenticado.getPrincipal());*/
-        return  ResponseEntity.ok(new TokenData(" "));
+        try {
+            Authentication authToken = new UsernamePasswordAuthenticationToken(user.email(), user.password());
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            User authenticatedUser = (User) authentication.getPrincipal();
+            String tokenJWT = serviceToken.generateToken(authenticatedUser);
+            return ResponseEntity.ok(new TokenData(tokenJWT));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 
-    public ResponseEntity<String> login(DTOUserLogin user){
-        if(userRepository.existsByEmailAndPassword(user.email(), user.password())){
+    public ResponseEntity<String> login(DTOUserLogin user) {
+        if (userRepository.existsByEmailAndPassword(user.email(), user.password())) {
             return ResponseEntity.ok("User logged in");
         }
-        return  ResponseEntity.ok("This user does not exist");
+        return ResponseEntity.ok("This user does not exist");
     }
 
     public ResponseEntity<DTOUserAnswer> registerUser(DTOUser userNew, UriComponentsBuilder uriComponentsBuilder) {
@@ -62,8 +74,7 @@ public class ServiceUser {
             throw new NotExist("This username is already in use");
         }
         var user = new User(userNew);
-        //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        //user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         URI url = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(url).body(new DTOUserAnswer(user));

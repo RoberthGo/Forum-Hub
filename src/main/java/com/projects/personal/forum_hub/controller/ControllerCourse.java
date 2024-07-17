@@ -44,7 +44,7 @@ public class ControllerCourse {
 
     @DeleteMapping("/{idAuthor}/{idCourse}")
     public ResponseEntity<DTOCourseAnswer> deleteCourse(@PathVariable Long idAuthor, @PathVariable Long idCourse) {
-        return serviceCourse.delete(idAuthor,idCourse);
+        return serviceCourse.delete(idAuthor, idCourse);
     }
 
 }

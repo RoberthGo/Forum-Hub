@@ -1,7 +1,6 @@
 package com.projects.personal.forum_hub.models;
 
 import com.projects.personal.forum_hub.dto.course.DTOCourse;
-import com.projects.personal.forum_hub.dto.course.DTOCourseAnswer;
 import com.projects.personal.forum_hub.dto.course.DTOUpdateCourse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,20 +28,20 @@ public class Course {
         this.author_id = idAuthor;
     }
 
-    public void updateData(DTOUpdateCourse course){
-        if(course.name() != null){
+    public void updateData(DTOUpdateCourse course) {
+        if (course.name() != null) {
             this.name = course.name();
         }
-        if(course.category() != null){
+        if (course.category() != null) {
             this.category = course.category();
         }
-        if(course.publicCourse() != this.publicCourse){
+        if (course.publicCourse() != this.publicCourse) {
             this.publicCourse = course.publicCourse();
         }
     }
 
-    public boolean getPublicCourse(){
-        return  this.publicCourse;
+    public boolean getPublicCourse() {
+        return this.publicCourse;
     }
 
 }

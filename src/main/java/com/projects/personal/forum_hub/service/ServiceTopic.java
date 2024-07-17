@@ -32,7 +32,7 @@ public class ServiceTopic {
         if (!repositoryUser.existsById(topic.getAuthor())) {
             throw new NotExist("This user does not exist ");
         }
-        if(!repositoryCourse.existsById(topic.getCourse())) {
+        if (!repositoryCourse.existsById(topic.getCourse())) {
             throw new NotExist("This course does not exist");
         }
         if (repositoryTopic.existsByTitleAndMessage(topic.getTitle(), topic.getMessage())) {
@@ -55,7 +55,7 @@ public class ServiceTopic {
         if (repositoryTopic.existsById(id)) {
             Optional<Topic> topicDB = Optional.of(repositoryTopic.getReferenceById(id));
             var topic = topicDB.get();
-            if ( repositoryTopic.existsByTitleAndMessage(dataUpdate.title(), dataUpdate.message())) {
+            if (repositoryTopic.existsByTitleAndMessage(dataUpdate.title(), dataUpdate.message())) {
                 throw new NotExist("There is already a topic exactly like this");
             }
             if (dataUpdate.message() != null) {
